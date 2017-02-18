@@ -81,8 +81,9 @@ app.get('/sendPic',function(req,res){
 
 app.get('/sendName',function(req,res){
     MongoClient.connect(url,function(err,db){
-        db.collection('user').find({}),function(err,docs){
-            if(err){
+        db.collection('users').find({}),function(error,docs){
+            if(error){
+                
                 console.log(err);
                 res.end();
             }
