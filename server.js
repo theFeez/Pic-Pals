@@ -68,6 +68,7 @@ app.post('/upload',upload.single('image'),function(req,res){
 })
 
 app.post('/login',function(req,res){
+    console.log(req.body);
     console.log(req.body.username);
     console.log(req.body.password);
     
