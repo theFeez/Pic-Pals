@@ -61,34 +61,33 @@ app.get('/sendPic',function(req,res){
            res.send(false);
        } 
         else{
-          /*  db.collection('users').find({$not{'username':req.body.username}},function(err,docs){
-                var doc = docs[getRandomInt(0,docs.length-1)];
-                res.sendFile(doc.images[doc.images.length-1]);
-            })*/
-            fs.readdir(__dirname+'/pics',function(err,files){
+            db.collection('users').findOne({'username':req.body.username},function(err,docs){
+                
+                res.sendFile(__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
+            })
+            /*fs.readdir(__dirname+'/pics',function(err,files){
                 if(err){
                     console.log(err);
                 }
                 else{
                     res.sendFile(__dirname+'/pics/'+files[getRandomInt(0,files.length-1)]); 
                 }
-            })
+            })*/
         }
     });
-    var num = getRandomInt()
-    //res.sendFile(__dirname+'/pics/ellieKemper.jpg');
+    
    
 });
 
 app.get('/sendName',function(req,res){
     MongoClient.connect(url,function(err,db){
-        db.collection('user').findOne({images:{$all:[__dirname+'/pics/'+req.body.fileName]}}),function(err,docs){
+        db.collection('user').find({}),function(err,docs){
             if(err){
                 console.log(err);
                 res.end();
             }
             else{
-                res.send(docs.username);
+                res.send(docs[getRandomInt(0,docs.length-1)]);
             }
         }
     })
@@ -122,7 +121,7 @@ app.post('/upload',upload.single('image'),function(req,res){
                 console.log(files[i]);
             }
         });
-        res.redirect('/sendPic');
+        res.redirect('/sendName');
         
     }
     
