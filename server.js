@@ -93,7 +93,7 @@ app.get('/sendName',function(req,res){
             }
             else{
                 console.log('are we timing out?');
-                console.log(docs[getRandomInt(0,docs.length-1)].username);
+                console.log(docs[0].username);
                 res.send(docs[getRandomInt(0,docs.length-1)].username);
             }
              
