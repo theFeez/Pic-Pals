@@ -80,6 +80,21 @@ app.get('/sendPic',function(req,res){
    
 });
 
+app.get('/sendName',function(req,res){
+    MongoClient.connect(url,function(err,db){
+        db.collection('user').findOne({images:{$all:[__dirname+'/pics/'+req.body.fileName]}}),function(err,docs){
+            if(err){
+                console.log(err);
+                res.end();
+            }
+            else{
+                res.send(docs.username);
+            }
+        }
+    })
+    db.close();
+})
+
 app.post('/upload',upload.single('image'),function(req,res){
     console.log('upload request recieved');
     if(req.file===undefined){
@@ -176,6 +191,15 @@ app.post('/login',function(req,res){
     
     
 });
+
+app.post('/review',function(req,res){
+    var newScore = req.body.score;
+    MongoClient.connect(url,function(err,db){
+        if(err){
+            console.log(err);
+        }
+    })
+})
 
 
 app.listen(process.env.PORT||500,function(){
