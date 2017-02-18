@@ -53,13 +53,9 @@ app.get('/',function(req,res){
     
 });
 
-app.get('/sendPic',function(req,res){
-   console.log('this is a test please panic');
-    console.log(req.query.username);
-    res.sendFile(__dirname+'/pics/ellieKemper.jpg');
-});
 
-app.get('/sendPic2',function(req,res){
+
+app.post('/sendPic',function(req,res){
     console.log('reqested load pic');
     console.log(req.body.username);
     MongoClient.connect(url,function(err,db){
