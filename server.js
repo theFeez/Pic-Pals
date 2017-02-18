@@ -87,9 +87,10 @@ app.get('/sendName',function(req,res){
                 res.end();
             }
             else{
+                console.log(docs[getRandomInt(0,docs.length-1)].username);
                 res.send(docs[getRandomInt(0,docs.length-1)].username);
             }
-             db.close();
+             
         }
        
     })
@@ -142,6 +143,7 @@ app.post('/register',function(req,res){
                     res.send(false);
                 }
                 if(docs!=null){
+                    console.log(req.body.username);
                     res.send(false);
                 }
                 else{
