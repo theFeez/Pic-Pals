@@ -62,7 +62,7 @@ app.get('/sendPic',function(req,res){
        } 
         else{
             db.collection('users').findOne({'username':req.body.username},function(err,docs){
-                
+                console.log(req.body.username);
                 res.sendFile(__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
             })
             /*fs.readdir(__dirname+'/pics',function(err,files){
