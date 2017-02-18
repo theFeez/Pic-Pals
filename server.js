@@ -70,7 +70,7 @@ app.get('/sendPic',function(req,res){
                     console.log(err);
                 }
                 else{
-                    res.sendFile(__dirname+'/pics/'+files[getRandomInt(0,files.length-1)]);
+                    res.sendFile(__dirname+'/pics/'+files[getRandomInt(0,files.length-1)]); 
                 }
             })
         }
@@ -120,7 +120,7 @@ app.post('/register',function(req,res){
             res.send(false)
         }
         else{
-            if(db.collection('users').find({'username':req.body.username},function(error, docs){
+            db.collection('users').find({'username':req.body.username},function(error, docs){
                 if(error){
                     console.log(err);
                     res.send(false);
@@ -132,7 +132,7 @@ app.post('/register',function(req,res){
                     db.collection('users').insert({'username':req.body.username,'password':req.body.password});
                     res.send(true);
                 }
-            }))
+            });
             
         }
         db.close();
