@@ -74,6 +74,7 @@ app.get('/sendPic',function(req,res){
                 }
             })*/
         }
+        db.close();
     });
     
    
@@ -82,6 +83,7 @@ app.get('/sendPic',function(req,res){
 app.get('/sendName',function(req,res){
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
+        console.log('connected to mongo');
         db.collection('users').find({}),function(error,docs){
             console.log(docs);
             if(error){
@@ -194,6 +196,7 @@ app.post('/login',function(req,res){
 
             });
         }
+        db.close();
     })
     
     
