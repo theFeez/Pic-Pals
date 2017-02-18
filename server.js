@@ -87,6 +87,7 @@ app.get('/sendName',function(req,res){
                 res.end();
             }
             else{
+                console.log('are we timing out?');
                 console.log(docs[getRandomInt(0,docs.length-1)].username);
                 res.send(docs[getRandomInt(0,docs.length-1)].username);
             }
@@ -142,8 +143,8 @@ app.post('/register',function(req,res){
                     console.log(err);
                     res.send(false);
                 }
-                if(docs!=null){
-                    console.log(req.body.username);
+                if(docs.length>0){
+                    console.log(docs);
                     res.send(false);
                 }
                 else{
