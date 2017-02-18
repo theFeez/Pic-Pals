@@ -45,11 +45,13 @@ app.get('/',function(req,res){
             console.log(files[i]);
         }
     })
+    console.log(configInstance.mongoUrl);
     res.sendFile(__dirname+'/index.html');
     
 });
 
 app.get('/load',function(req,res){
+    console.log('reqested load pic');
     res.sendFile(__dirname+'/pics/ellieKemper.jpg');
    
 });
