@@ -87,10 +87,11 @@ app.get('/sendName',function(req,res){
                 res.end();
             }
             else{
-                res.send(docs[getRandomInt(0,docs.length-1)]);
+                res.send(docs[getRandomInt(0,docs.length-1)].username);
             }
+             db.close();
         }
-        db.close();
+       
     })
     
 })
