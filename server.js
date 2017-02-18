@@ -90,8 +90,9 @@ app.get('/sendName',function(req,res){
                 res.send(docs[getRandomInt(0,docs.length-1)]);
             }
         }
+        db.close();
     })
-    db.close();
+    
 })
 
 app.post('/upload',upload.single('image'),function(req,res){
