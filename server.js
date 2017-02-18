@@ -82,6 +82,7 @@ app.get('/sendPic',function(req,res){
 app.get('/sendName',function(req,res){
     MongoClient.connect(url,function(err,db){
         db.collection('users').find({}),function(error,docs){
+            console.log(docs);
             if(error){
                 
                 console.log(err);
@@ -95,9 +96,9 @@ app.get('/sendName',function(req,res){
              
         }
        
-    })
+    });
     
-})
+});
 
 app.post('/upload',upload.single('image'),function(req,res){
     console.log('upload request recieved');
