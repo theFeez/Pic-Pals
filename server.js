@@ -9,6 +9,9 @@ var cors = require('cors');
 var request = require('request');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+var url = configInstance.mongoUrl;
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
@@ -47,12 +50,7 @@ app.get('/',function(req,res){
 });
 
 app.get('/load',function(req,res){
-    request('http://res.cloudinary.com/haklhguz5/image/upload/v1487404456/aj9zetaz3wi4a8mnit8r.jpg', function (error, response, body) {
-  if (!error && response.statusCode == 200) {
-    console.log(body) // Print the google web page.
-    res.send(body);
-  }
-})
+    res.sendFile(__dirname+'/pics/ellieKemper.jpg');
    
 });
 
@@ -80,17 +78,60 @@ app.post('/upload',upload.single('image'),function(req,res){
     
 })
 
+app.post('/register',function(req,res){
+    MongoClient.connect(url,function(err,db){
+        if(err){
+            console.log('error: '+err);
+        }
+        else{
+            db.collection('users').insert({'username':req.body.username,'password':req.body.password});
+        }
+        db.close();
+        res.end();
+       
+    })
+});
+
 app.post('/login',function(req,res){
     console.log('wild');
     console.log(req.body);
     console.log(req.body.username);
     console.log(req.body.password);
-    res.redirect('/sendTrue');
+    MongoClient.connect(url,function(err,db){
+        if(err){
+            console.log('error: '+err);
+        }
+        else{
+            db.collection('users').findOne({username:req.body.username}, function(error,docs){
+                if(error){
+                    console.log('error: '+err);
+                    res.end();
+                }
+                if(docs !== null){
+                    if(docs.password == req.body.password){
+                        console.log("Password correct!");
+                        res.send(true);
+                    } 
+                    else {
+                        console.log("Login failed! Bad password")
+                        res.send(false);
+                    }
+
+                }
+                else{ 
+                    console.log("Login failed! Bad Username");
+                    res.send(false);
+                }
+
+            });
+        }
+    })
+    
     
 });
 
 app.get('/sendTrue',function(req,res){
-    res.send('you logged in ');
+    res.send(true);
 })
 
 

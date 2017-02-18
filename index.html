@@ -13,6 +13,10 @@
   <input type="submit" value="Upload Image">
 </form>
     <input id='butt' type='button' value='show pic'>
+    <br>
+    <input type='text' id='user' hint='username'>
+    <input type='text' id='pass' hint='password'>
+    <input type='button' id='register' text='register'>
     
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
@@ -20,6 +24,11 @@
         $.post('http://localhost:500/login',{username:'hi',password:'bye'},function(data){
             console.log(data);
         });
+    });
+    $('#register').click(function(){
+       $.post('http://localhost:500/register',{username:$('#user').value(),password:$('#pass').value()},function(data){
+           console.log(data);
+       }) ;
     });
     </script>
 </body>
