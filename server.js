@@ -37,6 +37,9 @@ var storage = multer.diskStorage({
 
 var upload = multer({storage})
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
 app.get('/',function(req,res){
@@ -50,8 +53,29 @@ app.get('/',function(req,res){
     
 });
 
-app.get('/load',function(req,res){
+app.get('/sendPic',function(req,res){
     console.log('reqested load pic');
+    MongoClient.connect(url,function(err,db){
+       if(err){
+           console.log(err);
+           res.send(false);
+       } 
+        else{
+          /*  db.collection('users').find({$not{'username':req.body.username}},function(err,docs){
+                var doc = docs[getRandomInt(0,docs.length-1)];
+                res.sendFile(doc.images[doc.images.length-1]);
+            })*/
+            fs.readdir(__dirname+'/pics',function(err,files){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    res.sendFile(__dirname+'/pics/'+files[getRandomInt(0,files.length-1)]);
+                }
+            })
+        }
+    });
+    var num = getRandomInt()
     res.sendFile(__dirname+'/pics/ellieKemper.jpg');
    
 });
@@ -65,16 +89,25 @@ app.post('/upload',upload.single('image'),function(req,res){
     else{
         //deal with the picture
         console.log('acceptable image recieved');
-        /*cloudinary.uploader.upload(req.file.path,function(result){
-            console.log(result);
-            res.redirect('/');
-        })*/
+        
+       /* MongoClient.connect(url,function(err,db){
+            if(err){
+                console.log(err);
+            }
+            else{
+                db.collection('users').update({username:req.body.username},{$push:{images:req.file.path}});
+            }
+        })
+        */
+        
+        
+        
         fs.readdir(__dirname+'/pics',function(err,files){
             for(var i=0;i<files.length;i++){
                 console.log(files[i]);
             }
         });
-        res.end();
+        res.redirect('/sendPic');
         
     }
     
@@ -84,24 +117,36 @@ app.post('/register',function(req,res){
     MongoClient.connect(url,function(err,db){
         if(err){
             console.log('error: '+err);
+            res.send(false)
         }
         else{
-            db.collection('users').insert({'username':req.body.username,'password':req.body.password});
+            if(db.collection('users').find({'username':req.body.username},function(error, docs){
+                if(error){
+                    console.log(err);
+                    res.send(false);
+                }
+                if(docs!=null){
+                    res.send(false);
+                }
+                else{
+                    db.collection('users').insert({'username':req.body.username,'password':req.body.password});
+                    res.send(true);
+                }
+            }))
+            
         }
         db.close();
-        res.end();
+        
        
     })
 });
 
 app.post('/login',function(req,res){
-    console.log('wild');
     console.log(req.body);
-    console.log(req.body.username);
-    console.log(req.body.password);
     MongoClient.connect(url,function(err,db){
         if(err){
             console.log('error: '+err);
+            res.send(false);
         }
         else{
             db.collection('users').findOne({username:req.body.username}, function(error,docs){
@@ -131,10 +176,6 @@ app.post('/login',function(req,res){
     
     
 });
-
-app.get('/sendTrue',function(req,res){
-    res.send(true);
-})
 
 
 app.listen(process.env.PORT||500,function(){
