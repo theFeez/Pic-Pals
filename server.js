@@ -62,6 +62,7 @@ app.post('/upload',upload.single('image'),function(req,res){
             console.log(result);
             res.redirect('/');
         })*/
+        res.end();
         
     }
     
@@ -72,8 +73,13 @@ app.post('/login',function(req,res){
     console.log(req.body);
     console.log(req.body.username);
     console.log(req.body.password);
+    res.redirect('/sendTrue');
     
 });
+
+app.get('/sendTrue',function(req,res){
+    res.send('you logged in ');
+})
 
 
 app.listen(process.env.PORT||500,function(){
