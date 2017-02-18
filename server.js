@@ -76,7 +76,7 @@ app.get('/sendPic',function(req,res){
         }
     });
     var num = getRandomInt()
-    res.sendFile(__dirname+'/pics/ellieKemper.jpg');
+    //res.sendFile(__dirname+'/pics/ellieKemper.jpg');
    
 });
 
