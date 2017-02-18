@@ -77,7 +77,7 @@ app.get('/sendPic',function(req,res){
                     res.sendFile(__dirname+'/pics/'+files[getRandomInt(0,files.length-1)]); 
                 }
             })*/
-        }
+        });
         db.close();
     });
     
