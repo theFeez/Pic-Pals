@@ -84,11 +84,11 @@ app.get('/sendName',function(req,res){
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
-        db.collection('users').find({},function(error,docs){
-            console.log(docs);
+        db.collection('users').find({}).toArray(function(error,docs){
+            
             if(error){
                 
-                console.log(err);
+                console.log(error);
                 res.end();
             }
             else{
@@ -142,7 +142,7 @@ app.post('/register',function(req,res){
             res.send(false)
         }
         else{
-            db.collection('users').find({'username':req.body.username},function(error, docs){
+            db.collection('users').find({'username':req.body.username}).toArray(function(error,docs){
                 if(error){
                     console.log(err);
                     res.send(false);
