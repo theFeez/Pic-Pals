@@ -8,6 +8,7 @@ var path= require('path');
 var cors = require('cors');
 var request = require('request');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
@@ -36,7 +37,13 @@ var upload = multer({storage})
 
 
 app.get('/',function(req,res){
+    fs.readdir(__dirname+'/pics',function(err,files){
+        for(var i=0;i<files.length;i++){
+            console.log(files[i]);
+        }
+    })
     res.sendFile(__dirname+'/index.html');
+    
 });
 
 app.get('/load',function(req,res){
@@ -62,6 +69,11 @@ app.post('/upload',upload.single('image'),function(req,res){
             console.log(result);
             res.redirect('/');
         })*/
+        fs.readdir(__dirname+'/pics',function(err,files){
+            for(var i=0;i<files.length;i++){
+                console.log(files[i]);
+            }
+        });
         res.end();
         
     }
