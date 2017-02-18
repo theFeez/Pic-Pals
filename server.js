@@ -84,7 +84,7 @@ app.get('/sendName',function(req,res){
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
-        db.collection('users').find({}),function(error,docs){
+        db.collection('users').find({},function(error,docs){
             console.log(docs);
             if(error){
                 
@@ -99,7 +99,7 @@ app.get('/sendName',function(req,res){
              
         }
        
-    });
+    );
     
 });
 
