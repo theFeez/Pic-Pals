@@ -97,10 +97,9 @@ app.get('/sendName',function(req,res){
                 res.send(docs[getRandomInt(0,docs.length-1)].username);
             }
              
-        }
-       
-    );
+        });
     
+    });
 });
 
 app.post('/upload',upload.single('image'),function(req,res){
@@ -134,7 +133,7 @@ app.post('/upload',upload.single('image'),function(req,res){
         
     }
     
-})
+});
 
 app.post('/register',function(req,res){
     MongoClient.connect(url,function(err,db){
@@ -197,7 +196,7 @@ app.post('/login',function(req,res){
             });
         }
         db.close();
-    })
+    });
     
     
 });
