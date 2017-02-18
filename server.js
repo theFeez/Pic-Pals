@@ -53,7 +53,7 @@ app.get('/',function(req,res){
     
 });
 
-app.get('/sendPic',function(req,res){
+app.post('/sendPic',function(req,res){
    console.log('this is a test please panic');
     console.log(req.body.username);
     res.sendFile(__dirname+'/pics/ellieKemper.jpg');
