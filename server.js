@@ -97,7 +97,7 @@ app.get('/sendName',function(req,res){
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
-        db.collection('users').fineOne({username:req.query.username},function(error,doc){
+        db.collection('users').findOne({username:req.query.username},function(error,doc){
             myAverage = doc.averageScore;
             
             db.collection('users').find({}).toArray(function(error,docs){
