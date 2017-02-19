@@ -156,11 +156,11 @@ app.post('/upload',upload.single('image'),function(req,res){
     console.log('upload request recieved');
     console.log(req.body.username);
     if(req.file===undefined){
-        console.log(req.body);
+        console.log('file undefined');
         res.end();
     }
     else{
-        clarApp.models.predict(Clarifai.NSFW_MODEL,'https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg').then(function(response){
+        clarApp.models.predict(Clarifai.NSFW_MODEL,'http://res.cloudinary.com/hkqs3fahn/image/upload/v1481657619/owtmt9yk2bk8qavmdulv.jpg').then(function(response){
             console.log(response.data.outputs[0].data);
            
             if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
