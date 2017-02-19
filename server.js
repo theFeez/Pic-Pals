@@ -1,5 +1,9 @@
-var express = require('express');
-var app = express();
+var express = require('express'),
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server);
+
+
 var multer = require('multer');
 var config = require('./config');
 var configInstance = config;
@@ -12,9 +16,12 @@ var fs = require('fs');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 var url = configInstance.mongoUrl;
+var clarifai = require('clarifai');
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
+
+var clarApp = new clarifai.App('LVTIKzCDiEEqMRd-Ql88PkXMzJmCnvqAfAk_Fn8B','1zSt2UIOKuYyudzcifHgX_b2DkGGyTfRqC_18Ls9');
 
 cloudinary.config({ 
   cloud_name: configInstance.cloudName, 
@@ -41,6 +48,13 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function base64_encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
+}
+
 
 app.get('/',function(req,res){
     fs.readdir(__dirname+'/pics',function(err,files){
@@ -50,6 +64,8 @@ app.get('/',function(req,res){
     })
     console.log(configInstance.mongoUrl);
     res.sendFile(__dirname+'/index.html');
+        
+   
     
 });
 
@@ -65,11 +81,13 @@ app.post('/sendPic',function(req,res){
        } 
         else{
             db.collection('users').findOne({'username':req.body.username},function(err,docs){
-                var doc = docs.images[getRandomInt(0,docs.images.length-1)];
+                 var doc = docs.images[getRandomInt(0,docs.images.length-1)];
                 var picFile = (__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
                 console.log(docs);
                 console.log(doc);
                 console.log(picFile);
+               
+                
                 res.sendFile(picFile);
             /*fs.readdir(__dirname+'/pics',function(err,files){
                 if(err){
@@ -82,7 +100,7 @@ app.post('/sendPic',function(req,res){
             });
         }
             
-        db.close();
+        
     });
     
    
@@ -91,18 +109,24 @@ app.post('/sendPic',function(req,res){
 
 app.get('/sendName',function(req,res){
     var inRange=false;
-    var i=0;
+    var i;
     var myAverage;
-    var range = 1;
+    var range = .5;
+    var count = 0;
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
         console.log(req.query.username);
         db.collection('users').findOne({username:req.query.username},function(error,doc){
-            myAverage = doc.averageScore;
+            if(doc.averageScore!=null){
+                myAverage = doc.averageScore;
+            }
+            
             console.log(doc.username);
             
             db.collection('users').find({username:{$not:{$eq:doc.username}}}).toArray(function(error,docs){
+                console.log(docs);
+                i=getRandomInt(0,docs.length-1);
                 if(error){
 
                     console.log(error);
@@ -111,20 +135,26 @@ app.get('/sendName',function(req,res){
                 else{
                     console.log('are we timing out?');
                     while(inRange===false){
-                        if(i>docs.length){
-                            i=0;
+                        
+                        if(count>=docs.length){
+                            
                             range+=.5;
+                            count=0;
                         }
-                        if(Math.abs(myAverage-docs[i].averageScore)<=range){
+                        if(i>=docs.length){
+                            i=0;
+                        }
+                        if(Math.abs(myAverage-docs[i].averageScore)<=range&&docs[i].images!=undefined){
                             inRange = true;
                             break;
                         }
                         else{
-                            i++;
+                            i=getRandomInt(0,docs.length-1);
+                            count++;
                             continue;
                         }
                     }
-                    console.log(docs[0].username);
+                    
                     res.send(docs[i].username); 
                 }
              
@@ -137,37 +167,33 @@ app.get('/sendName',function(req,res){
 });
 
 app.post('/upload',upload.single('image'),function(req,res){
+    
     console.log('upload request recieved');
     console.log(req.body.username);
     if(req.file===undefined){
-        console.log(req.body);
+        console.log('file undefined');
         res.end();
     }
     else{
-        //deal with the picture
-        console.log('acceptable image recieved');
         
-       /* MongoClient.connect(url,function(err,db){
-            if(err){
-                console.log(err);
+                MongoClient.connect(url,function(err,db){
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        console.log('acceptable image recieved');
+                        db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
+                    }
+                })
+                fs.readdir(__dirname+'/pics',function(err,files){
+                    for(var i=0;i<files.length;i++){
+                        console.log(files[i]);
+                    }
+                });
+                
+                res.redirect('/sendName?username='+req.body.username);
+                
             }
-            else{
-                db.collection('users').update({username:req.body.username},{$push:{images:req.file.path}});
-            }
-        })
-        */
-        
-        
-        
-        fs.readdir(__dirname+'/pics',function(err,files){
-            for(var i=0;i<files.length;i++){
-                console.log(files[i]);
-            }
-        });
-        res.redirect('/sendName?username='+req.body.username);
-        
-    }
-    
 });
 
 app.post('/register',function(req,res){
@@ -175,6 +201,9 @@ app.post('/register',function(req,res){
         if(err){
             console.log('error: '+err);
             res.send(false)
+        }
+        else if(req.body.username===''||req.body.password===''){
+            res.send(false);
         }
         else{
             db.collection('users').find({'username':req.body.username}).toArray(function(error,docs){
@@ -187,13 +216,14 @@ app.post('/register',function(req,res){
                     res.send(false);
                 }
                 else{
-                    db.collection('users').insert({'username':req.body.username,'password':req.body.password});
+                    db.collection('users').insert({'username':req.body.username,'password':req.body.password,scores:[3],averageScore:3});
                     res.send(true);
+                    
                 }
             });
             
         }
-        db.close();
+        
         
        
     })
@@ -230,7 +260,7 @@ app.post('/login',function(req,res){
 
             });
         }
-        db.close();
+        
     });
     
     
@@ -258,16 +288,77 @@ app.post('/review',function(req,res){
                     average = sum/doc.scores.length;
                 }
                 db.collection('users').update({username:req.body.username},{$set:{averageScore:average}});
+                
+                res.end();
             });
-            db.close();
+            
             
         }
     })
 })
 
-
-
-app.listen(process.env.PORT||500,function(){
-    console.log('listening on '+this.address()+' '+this.address().port);
+app.post('/uploadDM',upload.single('image'),function(req,res){
+    console.log('direct request recieved');
+    console.log(req.body.username);
+    if(req.file===undefined){
+        console.log(req.body);
+        res.end();
+    }
+    else{
+        //deal with the picture
+        console.log('acceptable image recieved');
+        
+       MongoClient.connect(url,function(err,db){
+            if(err){
+                console.log(err);
+            }
+            else{
+                db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
+            }
+        })
+        
+        
+        
+        
+        fs.readdir(__dirname+'/pics',function(err,files){
+            for(var i=0;i<files.length;i++){
+                console.log(files[i]);
+            }
+        });
+        res.send({'filename':req.file.filename,'target':req.body.target});
+        
+    }
     
+});
+
+app.post('/recieveImage',function(req,res){
+    console('sending image dm');
+    res.sendFile(__dirname+'/pics/'+req.body.file);
 })
+
+io.sockets.on('connection',function(socket){
+    console.log('socket connected');
+    socket.on('init',function(data){
+        MongoClient.connect(url,function(err,db){
+            db.collection('users').update({$set:{'socketID':socket.id}});
+            
+        })
+    })
+    
+    socket.on('message',function(data){
+        console.log(data);
+    })
+    socket.on('sendPic',function(data){
+        console.log(data);
+        MongoClient.connect(url,function(err,db){
+            db.collection('users').findOne({username:data.target},function(error,doc){
+                io.sockets.to(doc.socketID).emit('recieveImage',{'file':data.file});
+            })
+        })
+        
+    })
+})
+
+
+
+server.listen(process.env.PORT || 3000);
