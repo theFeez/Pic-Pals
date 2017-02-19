@@ -21,7 +21,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
 
-var clarApp = new clarifai.App('ah5FMAdi3Ytj0LRDfs-avrk41aPwbx9tSODfoaGh','zhyVTFe5l_4CF1w2QeYjSf5hTJU8qcjTCvK592vV');
+var clarApp = new clarifai.App('LVTIKzCDiEEqMRd-Ql88PkXMzJmCnvqAfAk_Fn8B','1zSt2UIOKuYyudzcifHgX_b2DkGGyTfRqC_18Ls9');
 
 cloudinary.config({ 
   cloud_name: configInstance.cloudName, 
