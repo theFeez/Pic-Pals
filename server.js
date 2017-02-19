@@ -97,7 +97,7 @@ app.get('/sendName',function(req,res){
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
-        
+        console.log(req.query.username);
         db.collection('users').findOne({username:req.query.username},function(error,doc){
             myAverage = doc.averageScore;
             console.log(doc.username);
@@ -138,6 +138,7 @@ app.get('/sendName',function(req,res){
 
 app.post('/upload',upload.single('image'),function(req,res){
     console.log('upload request recieved');
+    console.log(req.body.username);
     if(req.file===undefined){
         console.log(req.body);
         res.end();
