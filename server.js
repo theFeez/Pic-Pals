@@ -63,6 +63,12 @@ app.get('/',function(req,res){
         }
     })
     console.log(configInstance.mongoUrl);
+    clarApp.models.predict(Clarifai.GENERAL_MODEL,'http://res.cloudinary.com/hkqs3fahn/image/upload/v1481657619/owtmt9yk2bk8qavmdulv.jpg').then(function(response){
+        console.log(response.data.outputs[0].data);
+    },function(error){
+        console.log('error');
+    });
+        
     res.sendFile(__dirname+'/index.html');
     
 });
@@ -191,8 +197,6 @@ app.post('/upload',upload.single('image'),function(req,res){
             res.end();
         });
         //deal with the picture
-        
-        
        
     
         
