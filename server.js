@@ -1,5 +1,9 @@
-var express = require('express');
-var app = express();
+var express = require('express'),
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server);
+
+
 var multer = require('multer');
 var config = require('./config');
 var configInstance = config;
@@ -265,9 +269,10 @@ app.post('/review',function(req,res){
     })
 })
 
-
-
-app.listen(process.env.PORT||500,function(){
-    console.log('listening on '+this.address()+' '+this.address().port);
-    
+io.sockets.on('connection',function(socket){
+    console.log('socket connected');
 })
+
+
+
+server.listen(process.env.PORT || 3000);

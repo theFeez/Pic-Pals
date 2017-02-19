@@ -21,7 +21,10 @@
     <input type='button' id='register' text='register'>
     
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 <script>
+    var socket = io('pic-pals.herokuapp.com/');
+    
     $('#butt').click(function(){
         $.post('http://localhost:500/sendPic',{username:'hi'},function(data){
             console.log(data);
