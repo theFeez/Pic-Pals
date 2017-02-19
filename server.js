@@ -129,7 +129,8 @@ app.get('/sendName',function(req,res){
                 else{
                     console.log('are we timing out?');
                     while(inRange===false){
-                        if(i>docs.length){
+                        
+                        if(i>=docs.length){
                             i=getRandomInt(0,docs.length-1);;
                             range+=.5;
                         }
