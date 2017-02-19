@@ -26,7 +26,7 @@
     var socket = io('pic-pals.herokuapp.com/');
     socket.emit('message','hello');
     $('#butt').click(function(){
-        $.post('http://localhost:500/sendPic',{username:'hi'},function(data){
+        $.post('http://localhost:3000/myScore',{username:'zach'},function(data){
             console.log(data);
         });
     });

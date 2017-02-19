@@ -347,8 +347,8 @@ app.post('/myScore',function(req,res){
                     console.log(error);
                 }
                 else{
-                    console.log((Math.round(doc.averageScore*10)/100).toString());
-                    res.send((Math.round(doc.averageScore*10)/100).toString());
+                    console.log((Math.round(doc.averageScore*10)/10).toString());
+                    res.send((Math.round(doc.averageScore*10)/10).toString());
                 }
             });
         }
