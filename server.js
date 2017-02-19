@@ -119,6 +119,7 @@ app.get('/sendName',function(req,res){
             console.log(doc.username);
             
             db.collection('users').find({username:{$not:{$eq:doc.username}}}).toArray(function(error,docs){
+                console.log(docs);
                 i=getRandomInt(0,docs.length-1);
                 if(error){
 
