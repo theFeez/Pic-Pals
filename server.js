@@ -81,11 +81,12 @@ app.post('/sendPic',function(req,res){
        } 
         else{
             db.collection('users').findOne({'username':req.body.username},function(err,docs){
-                var doc = docs.images[getRandomInt(0,docs.images.length-1)];
-                var picFile = (__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
                 console.log(docs);
                 console.log(doc);
                 console.log(picFile);
+                var doc = docs.images[getRandomInt(0,docs.images.length-1)];
+                var picFile = (__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
+                
                 res.sendFile(picFile);
             /*fs.readdir(__dirname+'/pics',function(err,files){
                 if(err){
