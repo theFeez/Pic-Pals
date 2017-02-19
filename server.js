@@ -163,38 +163,41 @@ app.post('/upload',upload.single('image'),function(req,res){
         clarApp.models.predict(Clarifai.NSFW_MODEL,{base64:base64_encode(__dirname+'/pics/'+req.file.filename)}).then(function(response){
             console.log(response.data.outputs[0].data);
            
-              if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
-                  console.log('nsfw');
-                                  
-              }
+            if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
+                console.log('nsfw');
+                res.redirect('/sendName?username='+req.body.username);    
+            }
             else{
                 MongoClient.connect(url,function(err,db){
-            if(err){
-                console.log(err);
-            }
-            else{
-                db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
-            }
-        })
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        console.log('acceptable image recieved');
+                        db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
+                    }
+                })
+                fs.readdir(__dirname+'/pics',function(err,files){
+                    for(var i=0;i<files.length;i++){
+                        console.log(files[i]);
+                    }
+                });
+                
+                res.redirect('/sendName?username='+req.body.username);
                 
             }
         },function(error){
             console.log(error);
         });
         //deal with the picture
-        console.log('acceptable image recieved');
+        
         
        
     
         
         
         
-        fs.readdir(__dirname+'/pics',function(err,files){
-            for(var i=0;i<files.length;i++){
-                console.log(files[i]);
-            }
-        });
-        res.redirect('/sendName?username='+req.body.username);
+        
         
     }
     
