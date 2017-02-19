@@ -16,9 +16,12 @@ var fs = require('fs');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 var url = configInstance.mongoUrl;
+var clarifai = require('clarifai');
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
+
+var clarApp = new clarifai.App(configInstance.clarifaiID,configInstance.clarifaiSecret);
 
 cloudinary.config({ 
   cloud_name: configInstance.cloudName, 
@@ -43,6 +46,13 @@ var upload = multer({storage})
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function base64_encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
 }
 
 
@@ -142,6 +152,7 @@ app.get('/sendName',function(req,res){
 });
 
 app.post('/upload',upload.single('image'),function(req,res){
+    
     console.log('upload request recieved');
     console.log(req.body.username);
     if(req.file===undefined){
@@ -149,10 +160,15 @@ app.post('/upload',upload.single('image'),function(req,res){
         res.end();
     }
     else{
-        //deal with the picture
-        console.log('acceptable image recieved');
-        
-       MongoClient.connect(url,function(err,db){
+        clarApp.models.predict(Clarifai.NSFW_MODEL,{base64:base64_encode(__dirname+'/pics/'+req.file.filename)}).then(function(response){
+            console.log(response.data.outputs[0].data);
+           
+              if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
+                  console.log('nsfw');
+                                  
+              }
+            else{
+                MongoClient.connect(url,function(err,db){
             if(err){
                 console.log(err);
             }
@@ -160,6 +176,15 @@ app.post('/upload',upload.single('image'),function(req,res){
                 db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
             }
         })
+                
+            }
+        },function(error){
+            console.log(error);
+        });
+        //deal with the picture
+        console.log('acceptable image recieved');
+        
+       
     
         
         
