@@ -100,7 +100,7 @@ app.get('/sendName',function(req,res){
         db.collection('users').findOne({username:req.query.username},function(error,doc){
             myAverage = doc.averageScore;
             
-            db.collection('users').find({}).toArray(function(error,docs){
+            db.collection('users').find({$not:{username:doc.username}}).toArray(function(error,docs){
             
                 if(error){
 
