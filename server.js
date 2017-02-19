@@ -271,6 +271,9 @@ app.post('/review',function(req,res){
 
 io.sockets.on('connection',function(socket){
     console.log('socket connected');
+    socket.on('message',function(data){
+        console.log(data);
+    })
 })
 
 
