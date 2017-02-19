@@ -219,7 +219,7 @@ app.post('/review',function(req,res){
             console.log(err);
         }
         else{
-            db.collection('users').update({username:req.body.username},{$push{scores:newScore}});
+            db.collection('users').update({username:req.body.username},{$push:{scores:newScore}});
             
             db.collection('users').findOne({username:req.body.username},function(error,doc){
                 if(error){
