@@ -160,7 +160,7 @@ app.post('/upload',upload.single('image'),function(req,res){
         res.end();
     }
     else{
-        clarApp.models.predict(Clarifai.NSFW_MODEL,{base64:base64_encode(__dirname+'/pics/'+req.file.filename)}).then(function(response){
+        clarApp.models.predict(Clarifai.NSFW_MODEL,'https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg').then(function(response){
             console.log(response.data.outputs[0].data);
            
             if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
@@ -188,9 +188,10 @@ app.post('/upload',upload.single('image'),function(req,res){
             }
         },function(error){
             console.log(error);
+            res.end();
         });
         //deal with the picture
-        
+        res.end();
         
        
     
