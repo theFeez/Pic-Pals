@@ -63,12 +63,9 @@ app.get('/',function(req,res){
         }
     })
     console.log(configInstance.mongoUrl);
-    clarApp.models.predict(Clarifai.GENERAL_MODEL,'http://res.cloudinary.com/hkqs3fahn/image/upload/v1481657619/owtmt9yk2bk8qavmdulv.jpg').then(function(response){
-        console.log(response.data.outputs[0].data);
+    
          res.sendFile(__dirname+'/index.html');
-    },function(error){
-        console.log('error');
-    });
+    
         
    
     
@@ -304,7 +301,7 @@ app.post('/review',function(req,res){
     })
 })
 
-app.post('/upload',upload.single('image'),function(req,res){
+app.post('/uploadDM',upload.single('image'),function(req,res){
     console.log('direct request recieved');
     console.log(req.body.username);
     if(req.file===undefined){
