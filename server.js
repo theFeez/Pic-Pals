@@ -81,11 +81,12 @@ app.post('/sendPic',function(req,res){
        } 
         else{
             db.collection('users').findOne({'username':req.body.username},function(err,docs){
+                 var doc = docs.images[getRandomInt(0,docs.images.length-1)];
+                var picFile = (__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
                 console.log(docs);
                 console.log(doc);
                 console.log(picFile);
-                var doc = docs.images[getRandomInt(0,docs.images.length-1)];
-                var picFile = (__dirname+'/pics/'+docs.images[getRandomInt(0,docs.images.length-1)]);
+               
                 
                 res.sendFile(picFile);
             /*fs.readdir(__dirname+'/pics',function(err,files){
@@ -111,6 +112,7 @@ app.get('/sendName',function(req,res){
     var i;
     var myAverage;
     var range = .5;
+    var count = 0;
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
@@ -131,20 +133,25 @@ app.get('/sendName',function(req,res){
                     console.log('are we timing out?');
                     while(inRange===false){
                         
-                        if(i>=docs.length){
-                            i=getRandomInt(0,docs.length-1);;
+                        if(count>=docs.length){
+                            
                             range+=.5;
+                            count=0;
+                        }
+                        if(i>=docs.length){
+                            i=0;
                         }
                         if(Math.abs(myAverage-docs[i].averageScore)<=range){
                             inRange = true;
                             break;
                         }
                         else{
-                            i++;
+                            i=getRandomInt(0,docs.length-1);
+                            count++;
                             continue;
                         }
                     }
-                    console.log(docs[0].username);
+                    
                     res.send(docs[i].username); 
                 }
              
