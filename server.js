@@ -21,7 +21,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
 
-var clarApp = new clarifai.App(configInstance.clarifaiID,configInstance.clarifaiSecret);
+var clarApp = new clarifai.App('ah5FMAdi3Ytj0LRDfs-avrk41aPwbx9tSODfoaGh','zhyVTFe5l_4CF1w2QeYjSf5hTJU8qcjTCvK592vV');
 
 cloudinary.config({ 
   cloud_name: configInstance.cloudName, 
@@ -191,7 +191,7 @@ app.post('/upload',upload.single('image'),function(req,res){
             res.end();
         });
         //deal with the picture
-        res.end();
+        
         
        
     
