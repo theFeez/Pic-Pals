@@ -124,7 +124,7 @@ app.get('/sendName',function(req,res){
                         }
                     }
                     console.log(docs[0].username);
-                    res.send(docs[i].username);
+                    res.send(docs[i].username); 
                 }
              
             });
@@ -162,7 +162,7 @@ app.post('/upload',upload.single('image'),function(req,res){
                 console.log(files[i]);
             }
         });
-        res.redirect('/sendName');
+        res.redirect('/sendName?username='+req.body.username);
         
     }
     
