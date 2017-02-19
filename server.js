@@ -95,9 +95,9 @@ app.post('/sendPic',function(req,res){
 
 app.get('/sendName',function(req,res){
     var inRange=false;
-    var i=0;
+    var i;
     var myAverage;
-    var range = 1;
+    var range = .5;
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
@@ -107,6 +107,7 @@ app.get('/sendName',function(req,res){
             console.log(doc.username);
             
             db.collection('users').find({username:{$not:{$eq:doc.username}}}).toArray(function(error,docs){
+                i=getRandomInt(0,docs.length-1);
                 if(error){
 
                     console.log(error);
@@ -116,7 +117,7 @@ app.get('/sendName',function(req,res){
                     console.log('are we timing out?');
                     while(inRange===false){
                         if(i>docs.length){
-                            i=0;
+                            i=getRandomInt(0,docs.length-1);;
                             range+=.5;
                         }
                         if(Math.abs(myAverage-docs[i].averageScore)<=range){
