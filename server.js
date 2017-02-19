@@ -100,7 +100,7 @@ app.post('/sendPic',function(req,res){
             });
         }
             
-        db.close();
+        
     });
     
    
@@ -215,11 +215,12 @@ app.post('/register',function(req,res){
                 else{
                     db.collection('users').insert({'username':req.body.username,'password':req.body.password});
                     res.send(true);
+                    
                 }
             });
             
         }
-        db.close();
+        
         
        
     })
@@ -256,7 +257,7 @@ app.post('/login',function(req,res){
 
             });
         }
-        db.close();
+        
     });
     
     
@@ -284,8 +285,10 @@ app.post('/review',function(req,res){
                     average = sum/doc.scores.length;
                 }
                 db.collection('users').update({username:req.body.username},{$set:{averageScore:average}});
+                
+                res.end();
             });
-            db.close();
+            
             
         }
     })
@@ -335,7 +338,7 @@ io.sockets.on('connection',function(socket){
     socket.on('init',function(data){
         MongoClient.connect(url,function(err,db){
             db.collection('users').update({$set:{'socketID':socket.id}});
-            db.close();
+            
         })
     })
     
