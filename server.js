@@ -63,12 +63,7 @@ app.get('/',function(req,res){
         }
     })
     console.log(configInstance.mongoUrl);
-    clarApp.models.predict(Clarifai.NSFW_MODEL,{base64:base64_encode(__dirname+'/pics/damson.jpg')}).then(function(response){
-        console.log(response.data.outputs[0].data);
-         res.sendFile(__dirname+'/index.html');
-    },function(error){
-        console.log('error');
-    });
+    res.sendFile(__dirname+'/index.html');
         
    
     
@@ -167,14 +162,7 @@ app.post('/upload',upload.single('image'),function(req,res){
         res.end();
     }
     else{
-        clarApp.models.predict(Clarifai.GENERAL_MODEL,'http://res.cloudinary.com/hkqs3fahn/image/upload/v1481657619/owtmt9yk2bk8qavmdulv.jpg').then(function(response){
-            console.log(response.data.outputs[0].data);
-           
-            if(response.data.outputs[0].data.concepts[0].name==='nsfw'){
-                console.log('nsfw');
-                res.redirect('/sendName?username='+req.body.username);    
-            }
-            else{
+        
                 MongoClient.connect(url,function(err,db){
                     if(err){
                         console.log(err);
@@ -193,20 +181,6 @@ app.post('/upload',upload.single('image'),function(req,res){
                 res.redirect('/sendName?username='+req.body.username);
                 
             }
-        },function(error){
-            console.log(error);
-            res.end();
-        });
-        //deal with the picture
-       
-    
-        
-        
-        
-        
-        
-    }
-    
 });
 
 app.post('/register',function(req,res){
