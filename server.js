@@ -336,6 +336,28 @@ app.post('/recieveImage',function(req,res){
     res.sendFile(__dirname+'/pics/'+req.body.file);
 })
 
+app.post('/myScore',function(req,res){
+    MongoClient.connect(url,function(err,db){
+        if(err){
+            console.log(err)   
+        }
+        else{
+            db.collection('users').findOne({'username':req.body.username},function(error,doc){
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    console.log((Math.round(doc.averageScore*10)/100).toString());
+                    res.send((Math.round(doc.averageScore*10)/100).toString());
+                }
+            });
+        }
+        
+    });
+        
+    
+});
+
 io.sockets.on('connection',function(socket){
     console.log('socket connected');
     socket.on('init',function(data){
