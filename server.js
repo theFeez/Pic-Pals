@@ -63,9 +63,12 @@ app.get('/',function(req,res){
         }
     })
     console.log(configInstance.mongoUrl);
-    
+    clarApp.models.predict(Clarifai.NSFW_MODEL,{base64:base64_encode(__dirname+'/pics/damson.jpg')}).then(function(response){
+        console.log(response.data.outputs[0].data);
          res.sendFile(__dirname+'/index.html');
-    
+    },function(error){
+        console.log('error');
+    });
         
    
     
