@@ -152,15 +152,15 @@ app.post('/upload',upload.single('image'),function(req,res){
         //deal with the picture
         console.log('acceptable image recieved');
         
-       /* MongoClient.connect(url,function(err,db){
+       MongoClient.connect(url,function(err,db){
             if(err){
                 console.log(err);
             }
             else{
-                db.collection('users').update({username:req.body.username},{$push:{images:req.file.path}});
+                db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
             }
         })
-        */
+    
         
         
         
@@ -270,10 +270,65 @@ app.post('/review',function(req,res){
     })
 })
 
+app.post('/upload',upload.single('image'),function(req,res){
+    console.log('direct request recieved');
+    console.log(req.body.username);
+    if(req.file===undefined){
+        console.log(req.body);
+        res.end();
+    }
+    else{
+        //deal with the picture
+        console.log('acceptable image recieved');
+        
+       MongoClient.connect(url,function(err,db){
+            if(err){
+                console.log(err);
+            }
+            else{
+                db.collection('users').update({username:req.body.username},{$push:{images:req.file.filename}});
+            }
+        })
+        
+        
+        
+        
+        fs.readdir(__dirname+'/pics',function(err,files){
+            for(var i=0;i<files.length;i++){
+                console.log(files[i]);
+            }
+        });
+        res.send({'filename':req.file.filename,'target':req.body.target});
+        
+    }
+    
+});
+
+app.post('/recieveImage',function(req,res){
+    console('sending image dm');
+    res.sendFile(__dirname+'/pics/'+req.body.file);
+})
+
 io.sockets.on('connection',function(socket){
     console.log('socket connected');
+    socket.on('init',function(data){
+        MongoClient.connect(url,function(err,db){
+            db.collection('users').update({$set:{'socketID':socket.id}});
+            db.close();
+        })
+    })
+    
     socket.on('message',function(data){
         console.log(data);
+    })
+    socket.on('sendPic',function(data){
+        console.log(data);
+        MongoClient.connect(url,function(err,db){
+            db.collection('users').findOne({username:data.target},function(error,doc){
+                io.sockets.to(doc.socketID).emit('recieveImage',{'file':data.file});
+            })
+        })
+        
     })
 })
 
