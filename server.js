@@ -16,12 +16,12 @@ var fs = require('fs');
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 var url = configInstance.mongoUrl;
-var clarifai = require('clarifai');
+
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true,limit:'50mb'}));
 app.use(bodyParser.json({limit:'50mb'}));
 
-var clarApp = new clarifai.App('LVTIKzCDiEEqMRd-Ql88PkXMzJmCnvqAfAk_Fn8B','1zSt2UIOKuYyudzcifHgX_b2DkGGyTfRqC_18Ls9');
+
 
 cloudinary.config({ 
   cloud_name: configInstance.cloudName, 
