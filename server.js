@@ -212,9 +212,29 @@ app.post('/login',function(req,res){
 
 app.post('/review',function(req,res){
     var newScore = req.body.score;
+    var average;
+    var sum=0;
     MongoClient.connect(url,function(err,db){
         if(err){
             console.log(err);
+        }
+        else{
+            db.collection('users').update({username:req.body.username},{$push{scores:newScore}});
+            
+            db.collection('users').findOne({username:req.body.username},function(error,doc){
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    for(var i=0; i<doc.scores.length;i++){
+                        sum = sum+doc.scores[i];
+                    }
+                    average = sum/doc.scores.length;
+                }
+                db.collection('users').update({username:req.body.username},{$set:{averageScore:average}});
+            });
+            db.close();
+            
         }
     })
 })
