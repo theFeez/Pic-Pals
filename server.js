@@ -144,29 +144,15 @@ app.get('/sendName',function(req,res){
                         if(i>=docs.length){
                             i=0;
                         }
-                        if(doc.averageScore!=null){
-                            if(Math.abs(myAverage-docs[i].averageScore)<=range&&docs[i].images!=undefined){
-                                inRange = true;
-                                break;
-                            }
-                            else{
-                                i=getRandomInt(0,docs.length-1);
-                                count++;
-                                continue;
-                            }
+                        if(Math.abs(myAverage-docs[i].averageScore)<=range&&docs[i].images!=undefined){
+                            inRange = true;
+                            break;
                         }
                         else{
-                            if(docs[i].images!=undefined){
-                                inRange=true;
-                                break;
-                            }
-                            else{
-                                i=getRandomInt(0,docs.length-1);
-                                count++;
-                                continue;
-                            }
+                            i=getRandomInt(0,docs.length-1);
+                            count++;
+                            continue;
                         }
-                        
                     }
                     
                     res.send(docs[i].username); 
@@ -230,7 +216,7 @@ app.post('/register',function(req,res){
                     res.send(false);
                 }
                 else{
-                    db.collection('users').insert({'username':req.body.username,'password':req.body.password});
+                    db.collection('users').insert({'username':req.body.username,'password':req.body.password,scores:[3],averageScore:3});
                     res.send(true);
                     
                 }
