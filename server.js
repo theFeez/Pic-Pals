@@ -90,23 +90,47 @@ app.post('/sendPic',function(req,res){
 
 
 app.get('/sendName',function(req,res){
+    var inRange=false;
+    var i=0;
+    var myAverage;
+    var range = 1;
     console.log('redirected');
     MongoClient.connect(url,function(err,db){
         console.log('connected to mongo');
-        db.collection('users').find({}).toArray(function(error,docs){
+        db.collection('users').fineOne({username:req.querey.username},function(error,doc){
+            myAverage = doc.averageScore;
             
-            if(error){
-                
-                console.log(error);
-                res.end();
-            }
-            else{
-                console.log('are we timing out?');
-                console.log(docs[0].username);
-                res.send(docs[getRandomInt(0,docs.length-1)].username);
-            }
+            db.collection('users').find({}).toArray(function(error,docs){
+            
+                if(error){
+
+                    console.log(error);
+                    res.end();
+                }
+                else{
+                    console.log('are we timing out?');
+                    while(inRange===false){
+                        if(i>docs.length){
+                            i=0;
+                            range+=.5;
+                        }
+                        if(Math.abs(myAverage-docs[i].averageScore)<=range){
+                            inRange = true;
+                            break;
+                        }
+                        else{
+                            i++;
+                            continue;
+                        }
+                    }
+                    console.log(docs[0].username);
+                    res.send(docs[i].username);
+                }
              
-        });
+            });
+            
+        })
+        
     
     });
 });
