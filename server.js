@@ -141,7 +141,7 @@ app.get('/sendName',function(req,res){
                         if(i>=docs.length){
                             i=0;
                         }
-                        if(Math.abs(myAverage-docs[i].averageScore)<=range){
+                        if(Math.abs(myAverage-docs[i].averageScore)<=range&&docs[i].images!=undefined){
                             inRange = true;
                             break;
                         }
@@ -198,6 +198,9 @@ app.post('/register',function(req,res){
         if(err){
             console.log('error: '+err);
             res.send(false)
+        }
+        else if(req.body.username===''||req.body.password===''){
+            res.send(false);
         }
         else{
             db.collection('users').find({'username':req.body.username}).toArray(function(error,docs){
