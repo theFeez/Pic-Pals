@@ -24,7 +24,7 @@
     <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io('pic-pals.herokuapp.com/');
-    io.emit('message','hello');
+    socket.emit('message','hello');
     $('#butt').click(function(){
         $.post('http://localhost:500/sendPic',{username:'hi'},function(data){
             console.log(data);
